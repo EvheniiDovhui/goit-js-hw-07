@@ -44,7 +44,6 @@ function onImgClick(evt) {
 function blockStandardAction(evt) {
   evt.preventDefault();
 }
-
 const gallery = new SimpleLightbox(".gallery a", {
   captionsData: "alt",
   captionDelay: 250,
