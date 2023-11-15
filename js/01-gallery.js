@@ -1,46 +1,47 @@
 import { galleryItems } from "./gallery-items.js";
 
-const galleryList = document.querySelector(".gallery");
+console.log(galleryItems);
 
-function createGalleryItem(item) {
-  const listItem = document.createElement("li");
-  listItem.classList.add("gallery__item");
+const divRef = document.querySelector(".gallery");
 
-  const link = document.createElement("a");
-  link.classList.add("gallery__link");
-  link.href = item.original;
+function createGalleryMarkup(items) {
+  return items
+    .map(
+      (item) => `<div class="js-gallery-item gallery__item">
+        <a href="${item.original}" class="js-gallery-link gallery__link">
+        <img class="js-gallery-img gallery__image" src="${item.preview}" data-source="${item.original}" alt="${item.description}" />
+        </a>
+      </div>`
+    )
+    .join("");
+}
 
-  const image = document.createElement("img");
-  image.classList.add("gallery__image");
-  image.src = item.preview;
-  image.setAttribute("data-source", item.original);
-  image.alt = item.description;
+const addGalleryMarkup = createGalleryMarkup(galleryItems);
+divRef.innerHTML = addGalleryMarkup;
 
-  link.link;
-  appendChild(image);
-  listItem.appendChild(link);
+divRef.addEventListener("click", onImgClick);
 
-  galleryList.appendChild(listItem);
+function onImgClick(evt) {
+  blockStandardAction(evt);
 
-  // Add click event listener to open the modal
-  link.addEventListener("click", (e) => {
-    e.preventDefault();
-    const instance = basicLightbox.create(
-      `<img src="${item.original}" alt="${item.description}">`
-    );
-    instance.show();
+  if (!evt.target.classList.contains("js-gallery-img")) {
+    return;
+  }
+
+  evt.preventDefault();
+
+  const instance = basicLightbox.create(
+    `<img src="${evt.target.dataset.source}" width="800" height="600">`
+  );
+  instance.show();
+
+  divRef.addEventListener("keydown", (event) => {
+    if (event.key === "Escape") {
+      instance.close();
+    }
   });
 }
 
-galleryItems.forEach(createGalleryItem);
-
-document.addEventListener("keydown", (e) => {
-  if (e.key === "Escape") {
-    const lightboxCloseButton = document.querySelector(
-      ".basicLightbox__wrapper"
-    );
-    if (lightboxCloseButton) {
-      lightboxCloseButton.click();
-    }
-  }
-});
+function blockStandardAction(evt) {
+  evt.preventDefault();
+}
